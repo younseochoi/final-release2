@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="review.ReviewDAO">
+	<resultMap type="java.util.HashMap" id="reviewlist">
+  		<id column="review_num" property="review_num"/>
+  		<id column="review_contents" property="review_contents"/>
+  		<id column="review_date" property="review_date"/>
+  		<id column="review_target_num" property="review_target_num"/>
+  		<id column="reviewer_role" property="reviewer_role"/>
+  		<id column="review_rating" property="review_rating"/>
+  		<id column="user_num" property="user_num"/>
+  		<id column="user_id" property="user_id"/>
+  	</resultMap>
+  	<resultMap type="java.util.HashMap" id="reviewAvg">
+  		<id column="review_target_num" property="review_target_num"/>
+  		<id column="review_target_id" property="review_target_id"/>
+  		<id column="review_rating_avg" property="review_rating_avg"/>
+  	</resultMap>
+
+
+	<!-- 리뷰대상 판매자 고유번호 찾아오기 -->
+  	<select id="findReviewTargetSellerNum" parameterType="int" resultType="int">
+		select IFNULL(user_num,0) from product_info where product_num=#{product_num}
+	</select>
+	<!-- 리뷰대상 구매자 고유 번호 가지고오기 -->
+  	<select id="findReviewTargetBuyerNum" parameterType="int" resultType="int">
+		select IFNULL(user_num, 0) from payment_info where product_num=#{product_num} limit 0,1;
+	</select>
+	<!-- 리뷰 등록 -->
+  	<insert id="insertReview" parameterType="reviewdto">
+  		insert into review (review_contents, review_rating, reviewer_role, reviewer_num, review_target_num, review_date) 
+  		values (#{review_contents}, #{review_rating}, #{reviewer_role}, #{reviewer_num}, #{review_target_num}, now())
+  	</insert>
+  	<!-- 유저 리뷰 가져오기 -->
+  	<select id="getUserReview" parameterType="int" resultMap="reviewlist">
+  		select review_num, review_contents, date_format(review_date,'%Y-%m-%d %T') review_date, review_target_num, review_rating, user_id, user_num, reviewer_num
+  		from review rv left join user_info ui on rv.reviewer_num = ui.user_num where review_target_num = #{user_num}
+  	</select>
+  	<!-- 해당 유저의 리뷰 평점 -->
+  	<select id="getUserReviewAvg" parameterType="int" resultMap="reviewAvg">
+  		select ifnull(round(avg(review_rating),2),0) as review_rating_avg , user_num as review_target_num, user_id as review_target_id
+  		from review rv join user_info ui on rv.review_target_num = ui.user_num where review_target_num=#{user_num}
+  	</select>
+  	<!-- 유저 리뷰 구매자 or 판매자 별 가져오기 -->
+  	<select id="getUserOptionReview" parameterType="reviewdto" resultMap="reviewlist">
+  		select review_num, review_contents, date_format(review_date,'%Y-%m-%d %T') review_date, review_target_num, review_rating, user_id, user_num, reviewer_num
+  		from review rv left join user_info ui on rv.reviewer_num = ui.user_num where review_target_num = #{review_target_num} and reviewer_role = #{reviewer_role}
+  	</select>
+  	<!-- 해당 유저의 구매자 or 판매자 별 리뷰 평점 -->
+  	<select id="getUserOptionReviewAvg" parameterType="reviewdto" resultMap="reviewAvg">
+  		select ifnull(round(avg(review_rating),2),0) as review_rating_avg , user_num as review_target_num, user_id as review_target_id
+  		from review rv join user_info ui on rv.review_target_num = ui.user_num where review_target_num=#{review_target_num} and reviewer_role = #{reviewer_role}
+  	</select>
+  </mapper>

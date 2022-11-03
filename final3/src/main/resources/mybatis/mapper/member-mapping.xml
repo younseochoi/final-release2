@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="member.MemberDAO">
+
+ 	<resultMap type="java.util.HashMap" id="getproducts">
+  		<id column="product_num" property="product_num"/>
+  		<id column="product_title" property="product_title"/>
+  		<id column="product_price" property="product_price"/>
+  		<id column="buyer_check" property="buyer_check"/>
+  		<id column="product_time" property="product_time"/>
+  		<id column="pay_time" property="pay_time"/>
+  		<id column="auction_check" property="auction_check"/>
+  		<id column="safe_trade" property="safe_trade"/>
+  		<id column="pay_price" property="pay_price"/>
+  		<id column="image_path" property="image_path"/>
+  		<id column="elapsed_date" property="elapsed_date"/>
+  		<id column="seller_check" property="seller_check"/>
+  		<id column="pay_time" property="pay_time"/>
+  	</resultMap>
+	<select id="checkLogin" parameterType="String" resultType="int">
+	select count(*) from user_info where user_id = #{user_id} and user_password = #{user_password}
+	</select>
+	
+	<select id="getUser_num" parameterType="String" resultType="int">
+	select user_num from user_info where user_id = #{user_id}
+	</select>
+	<!-- 유저 고유 번호 호출 -->
+	
+	<select id="getUser_id" parameterType="int" resultType="String">
+	select user_id from user_info where user_num = #{user_num}
+	</select>
+	<!-- 유저 아이디 호출 -->
+	
+	<!--  -->
+	<select id="oneMember" resultType="memberdto" parameterType="String" >
+    select * from user_info where user_id=#{user_id}
+	</select>
+
+	<!-- 회원가입 -->
+	<insert id="insertMember" parameterType="memberdto" >
+	 insert into user_info (user_name, user_tel, user_email, user_id, user_password)
+	 values (#{user_name},#{user_tel},#{user_email},#{user_id},#{user_password})
+	</insert>
+	
+	<!-- [승희] 판매글모아보기 -->
+	<select id="productList" parameterType="int" resultMap="getproducts">
+	select * from (select pi.product_num,product_title,pi.user_num,product_price,product_time,safe_trade,auction_check,product_sell,detail_num,image_path,
+	rank() over (partition by i.product_num order by image_path) as rnk , DATEDIFF(now(), seller_check) as elapsed_date, buyer_check
+	from product_info pi left join image i on pi.product_num=i.product_num left join payment_info pmi on pi.product_num = pmi.product_num
+	where pi.user_num = #{user_num})
+	as rankrow where rankrow.rnk=1 order by product_time desc;
+	</select>
+	<!-- 마이 페이지 -->
+	
+	<select id="countMy_id" parameterType="String" resultType="int">
+	select count(*) from user_info where user_email = #{user_email}
+	</select>
+	
+	<select id="getMy_id" parameterType="String" resultType="String">
+	select user_id from user_info where user_email = #{user_email}
+	</select>
+	
+	<select id="getMy_PW" parameterType="String" resultType="String">
+	select user_password from user_info where user_id = #{user_id}
+	</select>
+	
+ 
+	<select id="selectMyPage" resultType="memberdto" parameterType="int">
+	 select user_num, user_id, user_money, user_name, user_tel, user_email from user_info where user_num = #{user_num}
+	 </select>
+	 
+	 <update id="addMoney" parameterType="int">
+	 update user_info set user_money = #{pay_price} where user_num = #{user_num}
+	 </update>
+	
+	
+ </mapper>

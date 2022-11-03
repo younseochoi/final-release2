@@ -1,0 +1,287 @@
+@charset "UTF-8";
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@700&display=swap');
+
+body {
+  background-color : white;
+  font-family: 'Nanum Gothic', sans-serif;
+  font-size : 16px;
+}
+
+hr {
+	margin-top : 5px;
+	background-color: black;
+	height: 3px;
+}
+
+#user-id {
+	cursor: pointer;
+	color : #5C75E6;
+	font-size: 20px;
+	font-weight: bold;
+}
+
+
+
+.img-list {
+	border : 2px solid;
+	border-radius : 8px;
+	display: flex;
+	margin: 0 auto;
+	width : 100px;
+	height: 100px;
+	cursor: pointer;
+	border : 2px solid;
+}
+
+
+
+li {
+	margin: 0 auto;
+	padding : 0;
+	display: inline-block;
+}
+
+#main-div {
+	display: flex;
+	position : relative;
+	margin: 0 auto;
+}
+
+#info-table {
+	flex : 2;
+	width : 900px;
+	margin: 0 auto;
+	padding: 0;
+	table-layout: fixed;
+	border-collapse: separate !important;
+	border-spacing: 1.5px;
+	font-size : 18px;
+}
+
+#bid-div {
+	flex : 1;
+	margin: 0;
+	padding-top : 20px;
+	padding-left : 10px;
+	padding-right : 10px;
+	padding-bottom: 10px;
+}
+
+.bid-table {
+	text-align : center;
+	width : 400px;
+	border-radius: 8px;
+	border : none;
+	margin: 0 auto;
+	padding: 0;
+	border-collapse: separate !important;
+	border-spacing: 1.5px;
+	font-size: 18px;
+}
+
+.button-td {
+	border : none;
+	height: 15px;
+	padding: 3px;
+}
+
+.chatting-button {
+	cursor : pointer;
+	background-color: #5C75E6;
+	border : none;
+	border-radius: 8px;
+	width : 180px;
+	height: 55px;
+	margin-top: 5px;
+	padding: 0;
+	transition: all 0.2s;
+	color : white;
+	font-size : 25px;
+}
+
+.chatting-button:hover {
+	transform :  scale(1.02);
+	background-color: #68abfe;
+}
+
+#bid-button {
+	cursor : pointer;
+	background-color: #5C75E6;
+	border : none;
+	border-radius: 8px;
+	width : 180px;
+	height: 55px;
+	margin-top: 5px;
+	padding: 0;
+	transition: all 0.2s;
+	color : white;
+	font-size : 25px;
+}
+
+#bid-button:hover {
+	transform :  scale(1.02);
+	background-color: #68abfe;
+}
+
+#bid-price {
+	border : none;
+	background-color : transparent;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	font-size : 18px;
+	font-weight: bold;
+	color : #5C75E6;
+}
+
+#bid-td:hover {
+	background-color : #5C75E6;
+	color : white;
+	border : 1px solid white;
+}
+
+#bid-td:hover #bid-price {
+	color : white;
+}
+
+#bid-price:focus {
+	outline: none;
+	
+}
+
+#product_contents {
+	margin : auto;
+	margin-top : 15px;
+	padding : 8px;
+	border : 1px solid black;
+	border-radius : 8px;
+	width : 450px;
+	height: 400px;
+	font-size: 18px;
+}
+
+td {
+	border : 1px solid;
+	border-radius: 8px;
+}
+
+
+.img {
+	text-align: center;
+	border : none;
+	padding : 0;
+	margin: auto;
+}
+
+#img-td {
+	width : 600px;
+	height: 500px;
+}
+
+#main-img {
+	border : 2px solid;
+	border-radius : 8px;
+	display: flex;
+	margin: 0 auto;
+	width : 600px;
+	height: 500px;
+	object-fit : contain;
+}
+
+.head {
+	text-align: center;
+	width : 100px;
+	background-color: #5C75E6;
+	color : white;
+}
+
+.info {
+	text-align: center;
+	width : 150px;
+	height: 50px;
+}
+
+.head2 {
+	text-align: center;
+	width : 100px;
+	background-color: #5C75E6;
+	color : white;
+}
+
+.info2 {
+	text-align: center;
+	width : 50px;
+	height: 50px;
+}
+
+.head #statu-td {
+	margin: 0;
+	padding: 0;
+	height: 45px;
+}
+
+#statu-table {
+	border : none;
+	width : 100%;
+}
+
+#statu-table td {
+	border : none;
+	width : 75px;
+	margin : 0;
+	padding : 4px;
+	text-align: center;
+}
+
+#time {
+	font-weight: bold;
+}
+
+#list-table td {
+	border : none;
+}
+
+#go-chat {
+	font-size : 20px;
+	cursor : pointer;
+	border-radius : 8px;
+	border : none;
+	color : white;
+	background-color: #5C75E6;
+	margin: 0px auto;
+	margin-bottom : 5px;
+	padding: 10px;
+	width : 100%;
+	transition : 0.1s;
+}
+
+#go-chat:hover {
+	transform : scale(1.05);
+}
+
+#chat {
+	border-radius : 8px;
+	border : 1px solid black;
+	margin: 0px;
+	margin-left : 5px;
+	margin-bottom : 5px;
+	padding: 10px;
+	width : auto;
+	text-align: left;
+}
+
+#chat-hr1 {
+	background-color : white;
+	padding: 0;
+	border: none;
+	border-top: thick double #5C75E6;
+ 	text-align: center;
+ 	margin-top: 8px;
+ 	margin-bottom: 8px;
+}
+
+#list-modal {
+	margin : 5px 2px 5px 2px;
+	padding: 0 20px 30px 30px;
+	width : 500px;
+}

@@ -1,0 +1,289 @@
+@charset "UTF-8";
+
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@700&display=swap');
+
+body {
+  background-color : rgb(255, 255, 255);
+  font-family: 'Nanum Gothic', sans-serif;
+}
+
+#top-line {
+
+	margin: 0px auto;
+	padding: 5px;
+	border : 1px solid;
+  	position: -webkit-sticky;
+  	position: sticky;
+  	top: 0;
+  	width : auto;
+  	display: flex;
+}
+
+#logo {
+	width : 100px;
+	height: 100px;
+	border : 5px solid #5C75E6;
+	border-radius: 8px;
+	cursor: pointer;
+	margin: 0;
+	padding: 0;
+}
+
+.top-div {
+	margin: 0px;
+	padding: 0px;
+}
+
+.title {
+	font-size: 20px;
+	border : none;
+	margin-bottom: 10px;
+}
+
+#other {
+	color : #5C75E6;
+	transition: all 0.2s;
+	text-decoration: none;
+	font-size : 24px;
+}
+
+#other:hover {
+	color : red;
+}
+
+
+#thumbnail {
+	width : 300px;
+	height: 300px;
+	border: none;
+}
+
+#info-table {
+	text-align: center;
+	margin: 0 auto;
+	width : auto;
+	height: auto;
+	border-collapse: separate !important;
+	border-spacing: 3px;
+}
+
+td {
+	border : 1px solid black;
+	border-radius : 8px;
+}
+
+#info-div {
+	position : relative;
+	margin: 0 auto;
+	margin-top : 20px;
+	padding: 0px;
+}
+
+.title_msg-td {
+	width : 450px;
+}
+
+table .head {
+	background-color: #5C75E6;
+	border-radius : 8px;
+	color : white;
+	width : 150px;
+	font-size: 20px;
+}
+
+table .info {
+	font-size: 20px;
+	border-radius : 8px;
+}
+		
+.container{
+	position: relative;
+	width: 100%;
+	padding: 0;
+	margin: 0 auto;
+}
+
+
+.div1 {
+	background-color : white;
+	width: 500px;
+	height: 620px;
+	overflow: auto;
+	border-radius : 8px;
+	border-bottom: none;
+	margin: 0 auto;
+	margin-bottom: 10px;
+}
+
+.div2 .me {
+	position:relative;
+	display:flex;
+	flex-flow:column;
+	align-content:flex-end;
+	text-align:right;
+	flex-wrap:wrap;
+	border-radius: 8px; 
+	margin: 10px 0 2px 0;
+}
+
+.div2 .you {
+	position:relative;
+	display:flex;
+	flex-flow:column;
+	align-content:flex-start;
+	text-align:right;
+	flex-wrap:wrap;
+	border-radius: 8px; 
+	margin: 10px 0 2px 0;
+}
+
+.div2 .my-time {
+	position:relative;
+	display:flex;
+	flex-flow:column;
+	align-content:flex-end;
+	text-align:right;
+	flex-wrap:wrap;
+	border-radius: 8px; 
+	margin-right: 15px;
+	font-size: 12px;
+}
+
+.div2 .your-time {
+	position:relative;
+	display:flex;
+	flex-flow:column;
+	align-content:flex-start;
+	text-align:right;
+	flex-wrap:wrap;
+	margin-left: 15px;
+	font-size: 12px;
+}
+
+#system-msg {
+	margin-top : 5px;
+	padding-bottom : 5px;
+	text-align: center;
+	border-bottom: dotted 1px;
+}
+
+.div2 .me .chat {
+	display:flex;
+	flex-flow:column wrap;
+	word-break: break-word;
+	min-height:25px;
+	max-width:300px;
+	padding:5px 10px 5px 10px;
+	border-radius: 8px; 
+	margin-right : 15px;
+	color : white;
+	background-color: #5C75E6;
+}
+
+.div2 .you .chat {
+	display:flex;
+	flex-flow:column wrap;
+	word-break: break-word;
+	min-height:25px;
+	max-width:300px;
+	padding:5px 10px 5px 10px;
+	border-radius: 8px; 
+	background-color: #666666;
+	margin-left: 15px;
+	color : white;
+}
+
+.time{
+	/* border:1px solid black; */
+	margin-top:2px;
+	font-size: 14px;
+	color: #a2b1f1;
+}
+
+#name-p {
+	border-radius: 8px;
+	display: inline-block;
+}
+
+
+#contents-td {
+	padding-left: 5px;
+	padding-right: 5px;
+	
+}
+
+#getout-td {
+	margin : 0 auto;
+	height: 50px;
+	border : none;
+}
+
+#getout-button {
+	border : none;
+	border-radius : 8px;
+	background-color: #5C75E6;
+	margin: 0;
+	padding : 0;
+	width : 100%;
+	height : 50px;
+	color : white;
+	font-size: 23px;
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+#yourMsg {
+	background-color: #5C75E6;
+	height: 50px;
+	width: 98%;
+	margin : 0 auto;
+	margin-bottom : -6px;
+	padding: 0;
+	text-align:center;
+	align-items:center;
+	border : none;
+	border-radius: 8px;
+}
+
+#msg-td {
+	border-bottom: none;
+}
+
+
+#chatting {
+	width: 400px;
+	height: 30px;	
+	border-radius: 8px;
+	margin: 10px 5px 10px 10px;
+	padding: 4px;
+	border: none;
+}
+
+#sendBtn {
+	transition: all 0.2s ;
+	margin: 0px;
+	margin-left : 10px;
+	margin-bottom : 1px;
+	padding : 0px;
+	width: 50px;
+	height: 35px;
+	background-color: white;
+	border: none;
+	border-radius: 8px;
+	font-size : 16px;
+	color: black;
+}
+
+#getout-button:hover {
+	transform : scale(0.99);
+}
+
+#sendBtn:hover {
+	cursor:pointer;
+	border : 2px solid;
+	font-weight : bold;
+	color : white;
+	background-color:  #6682FF;
+	border : 1px solid;
+	transform : scale(1.02);
+}

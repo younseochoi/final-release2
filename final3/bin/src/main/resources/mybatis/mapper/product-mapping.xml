@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="product.ProductDAO">
+  	<resultMap type="java.util.HashMap" id="tagnames">
+  		<id column="detail_num" property="detail_num"/>
+  		<id column="detail_name" property="detail_name"/>
+  	</resultMap>
+  	<parameterMap type="java.util.HashMap" id="getforsale">
+  		<parameter property="idol_name"/>
+  		<parameter property="detail_name"/>
+  	</parameterMap>
+  	<resultMap type="java.util.HashMap" id="getproducts">
+  		<id column="product_num" property="product_num"/>
+  		<id column="product_title" property="product_title"/>
+  		<id column="idol_num" property="idol_num"/>
+  		<id column="category_num" property="category_num"/>
+  		<id column="product_contents" property="product_contents"/>
+  		<id column="product_price" property="product_price"/>
+  		<id column="buyer_check" property="buyer_check"/>
+  		<id column="product_time" property="product_time"/>
+  		<id column="pay_time" property="pay_time"/>
+  		<id column="billing_number" property="billing_number"/>
+  		<id column="pay_price" property="pay_price"/>
+  		<id column="image_path" property="image_path"/>
+  	</resultMap>
+  	
+  	<select id="getpdtDetailTags" parameterType="String" resultType="product.ProductDetailDTO">
+  		select * from product_detail where detail_name like #{keyword}
+  	</select>
+  	<insert id="insertSales" parameterType="productdto">
+  		insert into product_info 
+  		(product_title, idol_num, user_num, category_num,product_contents, product_time, safe_trade, auction_check, product_status1,
+  		product_status2, product_status3, product_status4, product_status5, detail_num, product_price) 
+  		values (#{product_title}, #{idol_num}, #{user_num}, #{category_num},#{product_contents}, now(), #{safe_trade}, #{auction_check}, #{product_status1},
+  		#{product_status2}, #{product_status3}, #{product_status4}, #{product_status5}, #{detail_num}, #{product_price})
+  	</insert>
+	<select id="getLastInsertNum" resultType="int">
+		select product_num from product_info order by product_num desc limit 0,1
+	</select>  	
+	<select id="getforSale" parameterMap="getforsale" resultType="String">
+		select distinct(detail_name) from product_info pi join product_detail pd on pi.detail_num=pd.detail_num 
+		join product_category pc on pi.category_num=pc.category_num join idol_category ic 
+		on pi.idol_num=ic.idol_num where pc.category_name= #{category_name} and ic.idol_name=#{idol_name}
+	</select>
+	<!-- 카테고리 별 보기 -->
+  	<select id="getProducts" parameterType="productdto" resultType="productdto">
+	  	select * from (select pi.product_num,product_title,idol_num,category_num,user_num,product_price,product_time,safe_trade,auction_check,
+		product_status1,product_status2,product_status3,product_status4,product_status5,product_sell,detail_num,image_path, rank() over (partition by i.product_num order by image_path desc) as rnk 
+		from product_info pi left join image i on pi.product_num=i.product_num) as rankrow where rankrow.rnk=1 and idol_num=#{idol_num} and category_num = #{category_num} order by product_time desc; 
+	</select>
+	<!-- 찜하기 -->
+	<insert id="likeProduct" parameterType="productdto">
+		insert into like_info (product_num, user_num)values (#{product_num}, #{user_num})
+	</insert>
+	<!-- 찜취소 -->
+	<delete id="unlikeProduct" parameterType="productdto">
+		delete from like_info where product_num = #{product_num} and user_num =  #{user_num};
+	</delete>
+	<!-- 찜한목록 가져오기 -->
+	<select id="getLikeProduct" parameterType="int" resultType="int">
+		select product_num from like_info where user_num=#{user_num}
+	</select>
+	<!-- 전체글 가져오기 -->
+	<select id="getAllProducts" resultType="productdto">
+		select * from (select pi.product_num,product_title,idol_num,category_num,user_num,product_price,product_time,safe_trade,auction_check,
+		product_status1,product_status2,product_status3,product_status4,product_status5,product_sell,detail_num,image_path, rank() over (partition by i.product_num order by image_path desc) as rnk 
+		from product_info pi left join image i on pi.product_num=i.product_num where pi.product_sell=0) as rankrow where rankrow.rnk=1 order by product_time desc; 
+	</select>
+	<!-- 아이돌 별 전체글 가져오기 -->
+	<select id="getProductsIdol" resultType="productdto">
+		select * from (select pi.product_num,product_title,idol_num,category_num,user_num,product_price,product_time,safe_trade,auction_check,
+		product_status1,product_status2,product_status3,product_status4,product_status5,product_sell,detail_num,image_path, rank() over (partition by i.product_num order by image_path desc) as rnk 
+		from product_info pi left join image i on pi.product_num=i.product_num where pi.product_sell=0) as rankrow where rankrow.rnk=1 and idol_num=#{idol_num} order by product_time desc; 
+	</select>
+	<!-- 상품 시세 기본 -->
+	<select id="getQuote" parameterType="int" resultType="productdto">
+		select DATE_FORMAT(product_time,'%Y-%m') product_time, avg(product_price) product_price from  product_info 
+		where product_time>DATE_SUB(CURDATE(), INTERVAL 6 MONTH) and detail_num=#{detail_num} group by DATE_FORMAT(product_time,'%Y-%m') order by product_time
+	</select>
+	<!-- 상품시세  필터:12개월 이내, 상태조건 있을 시 -->
+	<select id="getQuoteFilter" parameterType="productdto" resultType="productdto">
+		select DATE_FORMAT(product_time,'%Y-%m') product_time, avg(product_price) product_price 
+		from (select *  from  product_info where detail_num=#{detail_num} 
+		<if test='product_status1!=-1'> and product_status1=#{product_status1}</if>
+		<if test="product_status2!=-1"> and product_status2=#{product_status2}</if>
+		<if test="product_status3!=-1"> and product_status3=#{product_status3}</if>
+		<if test="product_status4!=''"> and product_status4=#{product_status4}</if>
+		<if test="product_status5!=-1"> and product_status5=#{product_status5}</if>
+		) 
+		as a where a.product_time>DATE_SUB(CURDATE(), INTERVAL #{product_time} MONTH)
+ 		group by DATE_FORMAT(product_time,'%Y-%m') order by DATE_FORMAT(product_time,'%Y-%m')
+	</select>
+	<!-- 상품시세  필터:12개월 이내, 상태조건 없음 -->
+	<select id="getQuoteFilter_NoOption" parameterType="productdto" resultType="productdto">
+		select DATE_FORMAT(product_time,'%Y-%m') product_time, avg(product_price) product_price 
+		from (select *  from  product_info where detail_num=#{detail_num} 
+		) as a where a.product_time>DATE_SUB(CURDATE(), INTERVAL #{product_time} MONTH)
+ 		group by DATE_FORMAT(product_time,'%Y-%m') order by DATE_FORMAT(product_time,'%Y-%m')
+	</select>
+	<!-- 상품시세  필터:6개월 이내, 상태 조건 없음 -->
+	 <select id="getQuoteFilter2_NoOption" parameterType="productdto" resultType="productdto">
+		select DATE_FORMAT(product_time,'%Y-%m-%d') product_time, avg(product_price) product_price 
+		from (select *  from  product_info where detail_num = #{detail_num}
+		)as a where a.product_time>DATE_SUB(CURDATE(), INTERVAL #{product_time} MONTH)
+ 		group by DATE_FORMAT(product_time,'%Y-%m-%d') order by DATE_FORMAT(product_time,'%Y-%m-%d');
+	</select>
+	<!-- 상품시세  필터:6개월 이내, 상태조건 있을 시 -->
+	<select id="getQuoteFilter2" parameterType="productdto" resultType="productdto">
+		select DATE_FORMAT(product_time,'%Y-%m-%d') product_time, avg(product_price) product_price
+		from (select *  from  product_info where detail_num = #{detail_num}
+		<if test='product_status1!=-1'> and product_status1 = #{product_status1}</if>
+		<if test="product_status2!= -1"> and product_status2 = #{product_status2}</if>
+		<if test="product_status3!=-1"> and product_status3 = #{product_status3}</if>
+		<if test="product_status4!=''"> and product_status4 = #{product_status4}</if>
+		<if test="product_status5!=-1"> and product_status5 = #{product_status5}</if>
+		)as a where a.product_time>DATE_SUB(CURDATE(), INTERVAL #{product_time} MONTH)
+ 		group by DATE_FORMAT(product_time,'%Y-%m-%d') order by DATE_FORMAT(product_time,'%Y-%m-%d');
+	</select> 
+	<select id="getProductDetailNum" parameterType="String" resultType="int">
+		select detail_num from product_detail where detail_name like #{detail_name}
+	</select>
+	<select id="getSaleslist" parameterType="int" resultType="productdto">
+		select * from product_info where product_sell = 1 and user_num = #{user_num}
+	</select>
+
+	
+	<select id="getBuying_list" parameterType="int" resultType="productdto">
+		select * from (select pi.product_num,product_title,user_num,product_price,product_time,safe_trade,auction_check,product_sell,detail_num,image_path,
+		rank() over (partition by i.product_num order by image_path) as rnk 
+		from product_info pi left join image i on pi.product_num=i.product_num
+		where buyer_num = #{buyer_num}) as rankrow where rankrow.rnk=1 order by product_time desc;
+	</select>
+	<!-- 구매목록 -->
+	
+	<!-- 판매글 수정하기 -->
+	<select id="getDetail" parameterType="int" resultType="productdto">
+		select * from product_info where product_num = #{product_num}
+	</select>
+	
+	<update id="updateSales" parameterType="productdto">
+		UPDATE product_info
+		SET product_title = #{product_title },
+			idol_num = #{idol_num },
+			category_num = #{category_num },
+			<!-- detail_num = #{detail_num }, -->
+			product_contents = #{product_contents },
+			product_price = #{product_price },
+			product_time = now(),
+			safe_trade = #{safe_trade },
+			auction_check = #{auction_check },
+			product_status1 = #{product_status1 },
+			product_status2 = #{product_status2 },
+			product_status3 = #{product_status3 },
+			product_status4 = #{product_status4 },
+			product_status5 = #{product_status5 }
+		WHERE product_num = #{product_num} ;
+	</update>
+
+  </mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="WebSocketChatting.ChattingDAO">
+
+<select id="getCount_log" parameterType="int" resultType="int">
+select count(*) from chatting_info where buyer_num = #{buyer_num} and seller_num = #{seller_num} and roomNumber = #{roomNumber}
+</select>
+
+<insert id="insertChatting_log" parameterType="chattingdto">
+insert into chatting_info (buyer_num , buyer_name , seller_num , roomNumber , product_num , fileName) values (#{buyer_num} , #{buyer_name} , #{seller_num} , #{roomNumber} , #{product_num} , #{fileName})
+</insert>
+
+<select id="getChatting_list" parameterType="int" resultType="chattingdto">
+select * from chatting_info where seller_num = #{seller_num} and product_num = #{product_num}
+</select>
+
+<select id="getCount_log2" parameterType="int" resultType="int">
+select count(*) from chatting_info where seller_num = #{seller_num} and product_num = #{product_num}
+</select>
+
+</mapper>

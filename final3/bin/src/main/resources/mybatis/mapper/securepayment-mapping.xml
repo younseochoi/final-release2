@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="securepayment.SecurePaymentDAO">
+
+	<resultMap type="java.util.HashMap" id="purchaselist">
+  		<id column="product_num" property="product_num"/>
+  		<id column="product_title" property="product_title"/>
+  		<id column="idol_num" property="idol_num"/>
+  		<id column="category_num" property="category_num"/>
+  		<id column="buyer" property="buyer"/>
+  		<id column="product_contents" property="product_contents"/>
+  		<id column="product_price" property="product_price"/>
+  		<id column="elapsed_date" property="elapsed_date"/>
+  		<id column="buyer_check" property="buyer_check"/>
+  		<id column="seller_check" property="seller_check"/>
+  		<id column="product_time" property="product_time"/>
+  		<id column="pay_time" property="pay_time"/>
+  		<id column="billing_number" property="billing_number"/>
+  		<id column="pay_price" property="pay_price"/>
+  	</resultMap>
+  	
+  	<resultMap type="java.util.HashMap" id="sellinglist">
+  		<id column="product_num" property="product_num"/>
+  		<id column="product_title" property="product_title"/>
+  		<id column="idol_num" property="idol_num"/>
+  		<id column="category_num" property="category_num"/>
+  		<id column="product_contents" property="product_contents"/>
+  		<id column="product_price" property="product_price"/>
+  		<id column="elapsed_date" property="elapsed_date"/>
+  		<id column="buyer_check" property="buyer_check"/>
+  		<id column="product_time" property="product_time"/>
+  		<id column="pay_time" property="pay_time"/>
+  		<id column="billing_number" property="billing_number"/>
+  		<id column="pay_price" property="pay_price"/>
+  	</resultMap>
+  	
+  	<insert id="securePaymentProcess" parameterType="securepaymentdto">
+  		insert into payment_info (user_num,product_num,pay_price,pay_time) 
+  		values (#{user_num},#{product_num}, #{pay_price},now())
+  	</insert>
+  	<update id="minusUserMoney" parameterType="securepaymentdto">
+  		update user_info set user_money=user_money-#{pay_price} where user_num=#{user_num}
+  	</update>
+  	<insert id="registerBillingNumber" parameterType="productdto">
+  		update product_info set billing_number=#{billing_number} where product_num = #{product_num}
+  	</insert>
+  	<insert id="updateSellerCheck" parameterType="int" >
+  		update payment_info set seller_check=now() where product_num=#{product_num}
+  	</insert>
+  	<select id="getPurchaselist" parameterType="int" resultMap="purchaselist">
+  		select pi.product_num, product_title, idol_num, category_num, pmi.user_num as buyer, product_contents, product_price, product_time,  DATEDIFF(now(), pay_time)
+ 		as elapsed_date  , buyer_check, seller_check, billing_number, pay_time, pay_price
+		from product_info pi join payment_info pmi on pi.product_num=pmi.product_num where pmi.user_num=#{user_num};  
+  	</select>
+  	<update id="refund" parameterType="securepaymentdto">
+  		update user_info set user_money = user_money + #{pay_price} where user_num = #{user_num}
+  	</update>
+  	<update id="updateBuyerCheck" parameterType="securepaymentdto">
+  		update payment_info set buyer_check= now() where user_num=#{user_num} and product_num = #{product_num}
+  	</update>
+  	<update id="updateProductSell" parameterType="int">
+  		update product_info set product_sell= 1  where product_num = #{product_num}
+  	</update>
+  	<select id="getMyProduct" parameterType="int" resultMap="sellinglist">
+  		select pi.product_num, pi.user_num, pmi.buyer_check, DATEDIFF(now(), seller_check) as elapsed_date, pay_price from product_info pi 
+  		join payment_info pmi on pi.product_num=pmi.product_num where pi.user_num=#{user_num}
+  	</select>
+  	<update id="depositToSeller" parameterType="securepaymentdto">
+  		update user_info set user_money= user_money + #{pay_price} where user_num=#{user_num}
+  	</update>
+  	<!-- 결제 상태 업데이트 -->
+  	<update id="updateProductSell2" parameterType="int[]">
+  		update product_info set product_sell= #{num[0]}  where product_num = #{num[1]}
+  	</update>
+  	<!-- 유저 보유 머니 가져오기 -->
+  	<select id="getUserMoney" parameterType="int" resultType="int">
+  		select user_money from user_info where user_num=#{user_num}
+  	</select>
+  	<!-- 임시 하나의 상품 가져오기 -->
+  	<select id="getProductOne" parameterType="int" resultType="productdto">
+  		select * from product_info where product_num = #{product_num}
+  	</select>
+  </mapper>

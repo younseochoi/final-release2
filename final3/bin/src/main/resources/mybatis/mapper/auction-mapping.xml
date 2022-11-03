@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="final_project.AuctionDAO">
+
+<insert id="requestAuction" parameterType="int">
+insert into auction_gauge (product_num , user_num) values ( #{product_num} , #{user_num} )
+</insert>
+
+<select id="requestNumber" parameterType="int" resultType="int"> 
+select count(*) from auction_gauge where product_num = #{product_num}
+</select>
+
+<select id="requestNumber2" parameterType="int" resultType="int"> 
+select count(*) from auction_gauge where product_num = #{product_num} and user_num = #{user_num}
+</select>
+<!-- 경매 요청 및 횟수 조회 -->
+
+<delete id="cancleRequest" parameterType="int">
+delete from auction_gauge where product_num = #{product_num} and user_num = #{user_num}
+</delete>
+
+<update id="auctionCheck" parameterType="int">
+update product_info set auction_check = 1 where product_num = #{product_num}
+</update>
+<!-- auction_check 값 업데이트 -->
+
+<insert id="requestAccept" parameterType="auctiondto">
+insert into auction_info (product_num , start_time , end_time , final_price , bid_unit , auction_method) values (#{product_num} , now() , now() + INTERVAL ${end_time} HOUR , #{final_price} , #{bid_unit} , #{auction_method})
+</insert>
+<!-- 경매로 전환 -->
+
+<select id="auctionChecking" parameterType="int" resultType="int">
+select count(*) from auction_info where product_num = #{product_num}
+</select>
+<!-- 경매 유무 확인. 제품 상세 페이지에서 활용 -->
+
+<select id="getAuction_info" parameterType="int" resultType="auctiondto"> 
+select * from auction_info where product_num = #{product_num}
+</select>
+<!-- 경매 정보 호출 -->
+
+<select id="getAuction_num" parameterType="int" resultType="int">
+select auction_num from auction_info where product_num = #{product_num}
+</select>
+<!-- auction_num만 호출 -->
+
+<update id="soldOut" parameterType="int">
+update product_info set product_price = #{final_price} and product_sell = 1 and buyer_num = #{user_num} where product_num = #{product_num}
+</update>
+<!--  -->
+
+<insert id="requestBid" parameterType="int">
+insert into auction_bid (auction_num , user_num , bid_price , bid_time) values ( #{auction_num} , #{user_num}, #{bid_price} , now())
+</insert>
+<!-- 입찰 -->
+
+<select id="Check_bid" parameterType="int" resultType="int">
+select count(*) from auction_bid where auction_num = #{auction_num} and user_num = #{user_num}
+</select>
+<!-- 비공개 입찰에서 입찰여부 -->
+
+<select id="getMuch_bid" parameterType="int" resultType="int">
+select count(*) from auction_bid where auction_num = #{auction_num}
+</select>
+<!-- 어떤 경매의 입찰 수 -->
+
+<select id="getMy_bid" parameterType="int" resultType="int">
+select ifnull(bid_price,0) from auction_bid where auction_num = #{auction_num} and user_num = #{user_num} order by bid_time desc limit 1
+</select>
+<!-- 어떤 경매에 대한 내 제시가 -->
+
+<select id="getSecond_bid">
+select bid_price from auction_bid where auction_num = #{auction_num} order by bid_price desc limit 1,1
+</select>
+ <!-- 2순위 입찰자의 입찰가 -->
+
+<select id="getLast_bid" parameterType="int" resultType="int">
+select user_num from auction_bid where auction_num = #{auction_num} order by bid_price desc limit 1
+</select>
+<!-- 최신 입찰자의 user_num을 호출 -->
+
+<select id="getFirst_bid" parameterType="int" resultType="int">
+select user_num from auction_bid where auction_num = #{auction_num} order by bid_time asc limit 1
+</select>
+<!-- 판매자의 user_num 호출 -->
+
+<update id="updatePrice" parameterType="int">
+update auction_info set final_price = #{bid_price} where auction_num = #{auction_num}
+</update>
+<!-- 경매 최고가 update -->
+
+<select id="getUser_money" parameterType="int" resultType="int">
+select user_money from user_info where user_num = #{user_num}
+</select>
+<!-- 보유머니 -->
+
+<update id="updateUser_money" parameterType="int">
+update user_info set user_money = user_money - #{final_price} where user_num = #{user_num}
+</update>
+<!-- 입찰자의 보유 머니 차감 -->
+
+<update id="refundUser_money" parameterType="int">
+update user_info set user_money = user_money + #{final_price} where user_num = #{user_num}
+</update>
+<!-- 입찰자의 보유 머니 환불 -->
+
+<select id="getProduct_info" parameterType="int" resultType="productdto"> 
+select product_title, product_num , user_num , detail_num , product_price , product_time from product_info where product_num = #{product_num}
+</select>
+<!-- 임시 제품 상세 정보 호출 -->
+
+<select id="getUser_num" parameterType="String" resultType="int">
+select user_num from user_info where user_id = #{user_id}
+</select>
+<!-- 임시 유저 고유 번호 호출 -->
+
+<select id="getUser_id" parameterType="int" resultType="String">
+select user_id from user_info where user_num = #{user_num}
+</select>
+<!-- 임시 유저 아이디 호출 -->
+
+<select id="getDetail_name" parameterType="int" resultType="String">
+select detail_name from product_detail where detail_num = #{detail_num}
+</select>
+<!-- 제품 상세 이름 호출 -->
+
+<!-- [승희] img_path 가져오기 -->
+<select id="getImage_path" parameterType="int" resultType="String">
+	select image_path from image where product_num = #{product_num}
+</select>
+
+</mapper>
+
+
+
+
+
+
